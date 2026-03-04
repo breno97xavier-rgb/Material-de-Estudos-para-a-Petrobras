@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --color-petro-green: #004d2c;
+  --color-petro-green-light: #008542;
+  --color-petro-yellow: #ffd100;
+  --color-petro-dark: #0a1a12;
+}
+
+@layer base {
+  body {
+    @apply bg-petro-dark text-white font-sans antialiased;
+    background-image: linear-gradient(rgba(10, 26, 18, 0.95), rgba(10, 26, 18, 0.95)), url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=2000&auto=format&fit=crop');
+    background-attachment: fixed;
+    background-size: cover;
+  }
+}
+
+.glass-card {
+  @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl;
+}
+
+.btn-yellow {
+  @apply bg-petro-yellow text-petro-dark font-bold py-4 px-8 rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 text-center uppercase tracking-wider;
+}
+
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.accordion-open .accordion-content {
+  max-height: 1000px;
+}
+
+/* Hide scrollbar for carousel */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

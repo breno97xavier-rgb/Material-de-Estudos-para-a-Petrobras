@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   CheckCircle2, 
+  XCircle,
   ChevronDown, 
   BookOpen, 
   Target, 
@@ -114,7 +115,7 @@ const FAQS = [
 
 // --- Components ---
 
-const AccordionItem = ({ title, children }: { title: string, children: React.ReactNode }) => {
+const AccordionItem: React.FC<{ title: string, children: React.ReactNode }> = ({ title, children }) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div className={`border-b border-white/10 ${isOpen ? 'accordion-open' : ''}`}>
@@ -475,6 +476,24 @@ export default function App() {
           </div>
         </section>
 
+        {/* 10. GARANTIA (Compact) */}
+        <section className="py-16 px-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-3xl mx-auto glass-card p-10 text-center space-y-6 border-petro-green-light/30 bg-petro-green/5"
+          >
+            <div className="mx-auto w-20 h-20 bg-petro-green-light/20 rounded-full flex items-center justify-center text-petro-green-light">
+              <ShieldCheck className="w-10 h-10" />
+            </div>
+            <h2 className="text-3xl font-bold">Garantia Incondicional de 7 Dias</h2>
+            <p className="text-gray-300 text-lg leading-relaxed max-w-2xl mx-auto">
+              Risco zero. Teste o material, explore os bônus e sinta a qualidade. Se por qualquer motivo você não gostar, basta nos enviar um e-mail e devolvemos 100% do seu dinheiro. Sem perguntas, sem burocracia.
+            </p>
+          </motion.div>
+        </section>
+
         {/* 9. PLANOS E PREÇOS */}
         <section id="oferta" className="py-32 px-4 relative">
           <div className="max-w-5xl mx-auto space-y-16">
@@ -484,68 +503,85 @@ export default function App() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-8 items-stretch">
-              {/* Plano 1 */}
-              <div className="glass-card p-10 flex flex-col justify-between border-white/5">
+              {/* Plano 1 - Plano Simples (Pouco atrativo) */}
+              <div className="glass-card p-10 flex flex-col justify-between border-white/5 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
                 <div className="space-y-6">
-                  <h3 className="text-2xl font-bold">Apostila Completa</h3>
-                  <p className="text-gray-400">O material base para sua aprovação.</p>
+                  <h3 className="text-2xl font-bold text-gray-400">Plano Simples</h3>
+                  <p className="text-gray-500 text-sm italic">Acesso básico e limitado.</p>
                   <ul className="space-y-4">
-                    <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-4 h-4 text-petro-green-light" /> Teoria Completa</li>
-                    <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-4 h-4 text-petro-green-light" /> Questões Gabaritadas</li>
-                    <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-4 h-4 text-petro-green-light" /> Acesso em PDF</li>
+                    <li className="flex items-center gap-3 text-sm text-gray-300">
+                      <CheckCircle2 className="w-4 h-4 text-petro-green-light flex-shrink-0" /> 
+                      Material Teórico Completo
+                    </li>
+                    {[
+                      "Questões Gabaritadas Inéditas",
+                      "Mapas Mentais Esquematizados Exclusivos",
+                      "Plataforma de Estudos Personalizada",
+                      "Atualizações Prioritárias Periódicas",
+                      "Suporte Vip 24h",
+                      "Organização de Estudos",
+                      "Material organizado rigorosamente por edital"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-sm text-gray-500">
+                        <XCircle className="w-4 h-4 text-red-500/50 flex-shrink-0" /> 
+                        <span className="line-through">{item}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <div className="mt-12 space-y-6">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-sm text-gray-400 line-through">R$ 47,00</span>
-                    <span className="text-4xl font-bold text-white">R$ 14,90</span>
+                    <span className="text-4xl font-bold text-gray-400">R$ 14,90</span>
                   </div>
-                  <a href="https://pay.wiapy.com/IuuREfm-3n" className="block w-full py-4 rounded-xl border border-white/20 text-center font-bold hover:bg-white/10 transition-colors">
-                    ADQUIRIR AGORA
+                  <a href="https://pay.wiapy.com/IuuREfm-3n" className="block w-full py-4 rounded-xl border border-white/10 text-center font-bold text-gray-500 hover:bg-white/5 transition-colors">
+                    QUERO O BÁSICO
                   </a>
                 </div>
               </div>
 
-              {/* Plano 2 */}
-              <div className="glass-card p-10 flex flex-col justify-between border-petro-yellow ring-4 ring-petro-yellow/20 relative">
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-petro-yellow text-petro-dark px-6 py-1 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl">
-                  MAIS VENDIDO
+              {/* Plano 2 - Plano Completo (Muito atrativo) */}
+              <motion.div 
+                whileHover={{ scale: 1.02 }}
+                className="glass-card p-10 flex flex-col justify-between border-petro-yellow ring-4 ring-petro-yellow/20 relative bg-gradient-to-b from-petro-green/20 to-transparent shadow-[0_0_50px_rgba(255,209,0,0.1)]"
+              >
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-petro-yellow text-petro-dark px-6 py-1 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl z-10">
+                  EXPERIÊNCIA COMPLETA
                 </div>
                 <div className="space-y-6">
-                  <h3 className="text-2xl font-bold text-petro-yellow">Combo Aprovação</h3>
-                  <p className="text-gray-400">A experiência completa para quem não quer arriscar.</p>
+                  <h3 className="text-3xl font-black text-petro-yellow tracking-tight">Plano Completo</h3>
+                  <p className="text-gray-300 font-medium">A trilha definitiva para sua aprovação na Petrobras.</p>
                   <ul className="space-y-4">
-                    <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-4 h-4 text-petro-yellow" /> Tudo do Plano Anterior</li>
-                    <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-4 h-4 text-petro-yellow" /> Edital Verticalizado</li>
-                    <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-4 h-4 text-petro-yellow" /> Mapas Mentais Exclusivos</li>
-                    <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-4 h-4 text-petro-yellow" /> Atualizações Prioritárias</li>
-                    <li className="flex items-center gap-2 text-sm"><CheckCircle2 className="w-4 h-4 text-petro-yellow" /> Suporte VIP</li>
+                    {[
+                      "Material Teórico Completo",
+                      "Questões Gabaritadas Inéditas",
+                      "Mapas Mentais Esquematizados Exclusivos",
+                      "Plataforma de Estudos Personalizada",
+                      "Atualizações Prioritárias Periódicas",
+                      "Suporte Vip 24h",
+                      "Organização de Estudos",
+                      "Material organizado rigorosamente por edital"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-sm font-semibold text-white">
+                        <CheckCircle2 className="w-5 h-5 text-petro-yellow flex-shrink-0" /> 
+                        {item}
+                      </li>
+                    ))}
                   </ul>
                 </div>
                 <div className="mt-12 space-y-6">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-sm text-gray-400 line-through">R$ 97,00</span>
-                    <span className="text-5xl font-black text-petro-yellow">R$ 28,90</span>
+                  <div className="flex flex-col">
+                    <span className="text-sm text-petro-yellow/60 font-bold uppercase tracking-widest">Apenas</span>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-sm text-gray-400 line-through">R$ 97,00</span>
+                      <span className="text-6xl font-black text-petro-yellow drop-shadow-lg">R$ 28,90</span>
+                    </div>
                   </div>
-                  <a href="https://pay.wiapy.com/rQa4DShctI" className="btn-yellow block w-full">
+                  <a href="https://pay.wiapy.com/rQa4DShctI" className="btn-yellow block w-full text-xl py-6 shadow-[0_10px_30px_rgba(255,209,0,0.3)]">
                     QUERO COMEÇAR AGORA
                   </a>
                 </div>
-              </div>
+              </motion.div>
             </div>
-          </div>
-        </section>
-
-        {/* 10. GARANTIA */}
-        <section className="py-24 px-4">
-          <div className="max-w-3xl mx-auto glass-card p-12 text-center space-y-8 border-petro-green-light/30">
-            <div className="mx-auto w-24 h-24 bg-petro-green-light/20 rounded-full flex items-center justify-center text-petro-green-light">
-              <ShieldCheck className="w-12 h-12" />
-            </div>
-            <h2 className="text-3xl font-bold">Garantia Incondicional de 7 Dias</h2>
-            <p className="text-gray-300 text-lg leading-relaxed">
-              Risco zero. Teste o material, explore os bônus e sinta a qualidade. Se por qualquer motivo você não gostar, basta nos enviar um e-mail e devolvemos 100% do seu dinheiro. Sem perguntas, sem burocracia.
-            </p>
           </div>
         </section>
 

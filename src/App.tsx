@@ -220,22 +220,14 @@ export default function App() {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="relative z-10 flex flex-col gap-4">
+              <div className="relative z-10">
                 <img 
-                  src="https://i.ibb.co/1Ym1sbpn/screencapture-editoraeditalconcursos-areadeestudo-mauve-vercel-app-2026-03-03-08-55-18.png" 
-                  alt="Plataforma de Estudos" 
-                  className="rounded-2xl shadow-2xl border border-white/10"
+                  src="https://i.ibb.co/s9kjrcJd/Whats-App-Image-2026-03-06-at-23-23-49.jpg" 
+                  alt="Mockup Completo: Plataforma, Apostila e Celular" 
+                  className="rounded-2xl shadow-2xl border border-white/10 w-full"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute -bottom-10 -left-10 w-64 md:w-80 rotate-[-5deg] hover:rotate-0 transition-transform duration-500">
-                  <img 
-                    src="https://i.ibb.co/wFQXKLxV/C-pia-de-Capa-de-Livro-Infantil-Ilustrado-Vibrante-PCD-Inclusivo.png" 
-                    alt="Capa Apostila" 
-                    className="rounded-xl shadow-2xl border-4 border-petro-dark"
-                    referrerPolicy="no-referrer"
-                  />
-                </div>
-                <div className="absolute -top-6 -right-6 bg-petro-yellow text-petro-dark w-24 h-24 rounded-full flex flex-col items-center justify-center font-bold text-center shadow-xl animate-bounce">
+                <div className="absolute -top-6 -right-6 bg-petro-yellow text-petro-dark w-24 h-24 rounded-full flex flex-col items-center justify-center font-bold text-center shadow-xl animate-bounce z-20">
                   <span className="text-xs">OFERTA</span>
                   <span className="text-lg">ESPECIAL</span>
                 </div>
@@ -415,22 +407,18 @@ export default function App() {
         <section className="py-24 px-4">
           <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
             <div className="order-2 lg:order-1 relative">
-              <div className="relative z-10">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+              >
                 <img 
-                  src="https://i.ibb.co/1Ym1sbpn/screencapture-editoraeditalconcursos-areadeestudo-mauve-vercel-app-2026-03-03-08-55-18.png" 
-                  alt="Plataforma" 
-                  className="rounded-xl shadow-2xl border border-white/10"
+                  src="https://i.ibb.co/s9kjrcJd/Whats-App-Image-2026-03-06-at-23-23-49.jpg" 
+                  alt="Conteúdo do Material: Plataforma, Tablet e Celular" 
+                  className="rounded-2xl shadow-2xl border border-white/10 w-full"
                   referrerPolicy="no-referrer"
                 />
-              </div>
-              <div className="absolute -bottom-10 -right-10 w-64 md:w-80 z-20">
-                <img 
-                  src="https://i.ibb.co/wFQXKLxV/C-pia-de-Capa-de-Livro-Infantil-Ilustrado-Vibrante-PCD-Inclusivo.png" 
-                  alt="Apostila" 
-                  className="rounded-xl shadow-2xl border-4 border-petro-dark"
-                  referrerPolicy="no-referrer"
-                />
-              </div>
+              </motion.div>
             </div>
             <div className="order-1 lg:order-2 space-y-8">
               <h2 className="text-3xl md:text-5xl font-bold">O que você recebe ao garantir sua vaga hoje:</h2>

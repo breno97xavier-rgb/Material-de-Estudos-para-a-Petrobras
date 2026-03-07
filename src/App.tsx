@@ -502,64 +502,80 @@ export default function App() {
               <p className="text-petro-yellow font-bold tracking-widest uppercase">Invista no seu futuro hoje</p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8 items-stretch">
-              {/* Plano 1 - Plano Simples (Pouco atrativo) */}
-              <div className="glass-card p-10 flex flex-col justify-between border-white/5 opacity-70 grayscale hover:grayscale-0 transition-all duration-500">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+              {/* Plano 1 - Plano Simples */}
+              <div className="glass-card p-8 flex flex-col justify-between border-white/10 hover:border-white/20 transition-all">
                 <div className="space-y-6">
-                  <h3 className="text-2xl font-bold text-gray-400">Plano Simples</h3>
-                  <p className="text-gray-500 text-sm italic">Acesso básico e limitado.</p>
+                  <h3 className="text-xl font-bold text-gray-300">Plano Simples</h3>
+                  <div className="w-12 h-1 bg-gray-600 rounded-full"></div>
                   <ul className="space-y-4">
-                    <li className="flex items-center gap-3 text-sm text-gray-300">
-                      <CheckCircle2 className="w-4 h-4 text-petro-green-light flex-shrink-0" /> 
-                      Material Teórico Completo
+                    <li className="flex items-center gap-3 text-sm text-gray-400">
+                      <CheckCircle2 className="w-4 h-4 text-gray-500 flex-shrink-0" /> 
+                      Conteúdo básico em PDF
                     </li>
+                  </ul>
+                </div>
+                <div className="mt-12 space-y-6">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-bold text-white">R$ 14,90</span>
+                  </div>
+                  <a href="https://pay.wiapy.com/IuuREfm-3n" className="block w-full py-3 rounded-lg border border-white/10 text-center font-bold text-gray-300 hover:bg-white/5 transition-colors">
+                    ADQUIRIR AGORA
+                  </a>
+                </div>
+              </div>
+
+              {/* Plano 2 - Plano Essencial */}
+              <div className="glass-card p-8 flex flex-col justify-between border-petro-green-light/30 bg-petro-green/5 relative overflow-hidden">
+                <div className="space-y-6">
+                  <h3 className="text-2xl font-bold text-white">Plano Essencial</h3>
+                  <div className="w-12 h-1 bg-petro-green-light rounded-full"></div>
+                  <ul className="space-y-4">
                     {[
+                      "Material Teórico Completo",
                       "Questões Gabaritadas Inéditas",
                       "Mapas Mentais Esquematizados Exclusivos",
-                      "Plataforma de Estudos Personalizada",
-                      "Atualizações Prioritárias Periódicas",
-                      "Suporte Vip 24h",
-                      "Organização de Estudos",
-                      "Material organizado rigorosamente por edital"
+                      "Plataforma de Estudos Personalizada"
                     ].map((item, i) => (
-                      <li key={i} className="flex items-center gap-3 text-sm text-gray-500">
-                        <XCircle className="w-4 h-4 text-red-500/50 flex-shrink-0" /> 
-                        <span className="line-through">{item}</span>
+                      <li key={i} className="flex items-center gap-3 text-sm text-gray-200">
+                        <CheckCircle2 className="w-4 h-4 text-petro-green-light flex-shrink-0" /> 
+                        {item}
                       </li>
                     ))}
                   </ul>
                 </div>
                 <div className="mt-12 space-y-6">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-gray-400">R$ 14,90</span>
+                    <span className="text-4xl font-bold text-white">R$ 28,90</span>
                   </div>
-                  <a href="https://pay.wiapy.com/IuuREfm-3n" className="block w-full py-4 rounded-xl border border-white/10 text-center font-bold text-gray-500 hover:bg-white/5 transition-colors">
-                    QUERO O BÁSICO
+                  <a href="https://pay.wiapy.com/rQa4DShctI" className="block w-full py-4 rounded-lg bg-petro-green-light text-white text-center font-bold hover:bg-petro-green transition-colors shadow-lg">
+                    QUERO ESTE
                   </a>
                 </div>
               </div>
 
-              {/* Plano 2 - Plano Completo (Muito atrativo) */}
+              {/* Plano 3 - Combo Aprovação (O mais atrativo) */}
               <motion.div 
-                whileHover={{ scale: 1.02 }}
-                className="glass-card p-10 flex flex-col justify-between border-petro-yellow ring-4 ring-petro-yellow/20 relative bg-gradient-to-b from-petro-green/20 to-transparent shadow-[0_0_50px_rgba(255,209,0,0.1)]"
+                whileHover={{ scale: 1.05 }}
+                className="glass-card p-8 flex flex-col justify-between border-petro-yellow ring-4 ring-petro-yellow/20 relative bg-gradient-to-b from-petro-green/30 to-transparent shadow-[0_0_50px_rgba(255,209,0,0.2)] z-10"
               >
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-petro-yellow text-petro-dark px-6 py-1 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl z-10">
-                  EXPERIÊNCIA COMPLETA
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-petro-yellow text-petro-dark px-6 py-1 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl whitespace-nowrap">
+                  O MAIS VENDIDO
                 </div>
                 <div className="space-y-6">
-                  <h3 className="text-3xl font-black text-petro-yellow tracking-tight">Plano Completo</h3>
-                  <p className="text-gray-300 font-medium">A trilha definitiva para sua aprovação na Petrobras.</p>
-                  <ul className="space-y-4">
+                  <h3 className="text-3xl font-black text-petro-yellow tracking-tight">Combo Aprovação</h3>
+                  <div className="w-12 h-1 bg-petro-yellow rounded-full"></div>
+                  <ul className="space-y-3">
                     {[
                       "Material Teórico Completo",
                       "Questões Gabaritadas Inéditas",
                       "Mapas Mentais Esquematizados Exclusivos",
                       "Plataforma de Estudos Personalizada",
+                      "Redação Discursiva para Concursos",
+                      "Como Estudar com PDFs",
+                      "Controle Emocional - Disciplina de Ferro",
                       "Atualizações Prioritárias Periódicas",
-                      "Suporte Vip 24h",
-                      "Organização de Estudos",
-                      "Material organizado rigorosamente por edital"
+                      "Suporte Vip 24h"
                     ].map((item, i) => (
                       <li key={i} className="flex items-center gap-3 text-sm font-semibold text-white">
                         <CheckCircle2 className="w-5 h-5 text-petro-yellow flex-shrink-0" /> 
@@ -568,16 +584,16 @@ export default function App() {
                     ))}
                   </ul>
                 </div>
-                <div className="mt-12 space-y-6">
+                <div className="mt-10 space-y-6">
                   <div className="flex flex-col">
-                    <span className="text-sm text-petro-yellow/60 font-bold uppercase tracking-widest">Apenas</span>
+                    <span className="text-sm text-petro-yellow/80 font-bold uppercase tracking-widest">O Melhor Custo-Benefício</span>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-sm text-gray-400 line-through">R$ 97,00</span>
-                      <span className="text-6xl font-black text-petro-yellow drop-shadow-lg">R$ 28,90</span>
+                      <span className="text-sm text-gray-400 line-through">R$ 197,00</span>
+                      <span className="text-6xl font-black text-petro-yellow drop-shadow-lg">R$ 48,90</span>
                     </div>
                   </div>
-                  <a href="https://pay.wiapy.com/rQa4DShctI" className="btn-yellow block w-full text-xl py-6 shadow-[0_10px_30px_rgba(255,209,0,0.3)]">
-                    QUERO COMEÇAR AGORA
+                  <a href="https://pay.wiapy.com/WCtjlHiso0" className="btn-yellow block w-full text-xl py-5 shadow-[0_10px_30px_rgba(255,209,0,0.3)]">
+                    QUERO SER APROVADO
                   </a>
                 </div>
               </motion.div>

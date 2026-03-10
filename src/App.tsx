@@ -12,7 +12,8 @@ import {
   ShieldCheck, 
   MessageCircle,
   Instagram,
-  Star
+  Star,
+  X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -135,26 +136,61 @@ const AccordionItem: React.FC<{ title: string, children: React.ReactNode }> = ({
   );
 };
 
-export default function App() {
-  const [isCarouselPaused, setIsCarouselPaused] = useState(false);
-  const carouselRef = useRef<HTMLDivElement>(null);
+const CountdownTimer = () => {
+  const [timeLeft, setTimeLeft] = useState({
+    hours: 0,
+    minutes: 0,
+    seconds: 0
+  });
 
   useEffect(() => {
-    if (isCarouselPaused) return;
-    
-    const interval = setInterval(() => {
-      if (carouselRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-        if (scrollLeft + clientWidth >= scrollWidth - 10) {
-          carouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          carouselRef.current.scrollBy({ left: 300, behavior: 'smooth' });
-        }
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const endOfDay = new Date();
+      endOfDay.setHours(23, 59, 59, 999);
+      
+      const difference = endOfDay.getTime() - now.getTime();
+      
+      if (difference > 0) {
+        setTimeLeft({
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60)
+        });
       }
-    }, 3000);
+    };
 
-    return () => clearInterval(interval);
-  }, [isCarouselPaused]);
+    const timer = setInterval(calculateTimeLeft, 1000);
+    calculateTimeLeft();
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatNumber = (num: number) => num.toString().padStart(2, '0');
+
+  return (
+    <div className="flex items-center justify-center gap-4 font-mono text-2xl font-bold text-petro-yellow">
+      <div className="flex flex-col items-center">
+        <span>{formatNumber(timeLeft.hours)}</span>
+        <span className="text-[10px] uppercase tracking-widest opacity-50">HH</span>
+      </div>
+      <span>:</span>
+      <div className="flex flex-col items-center">
+        <span>{formatNumber(timeLeft.minutes)}</span>
+        <span className="text-[10px] uppercase tracking-widest opacity-50">MM</span>
+      </div>
+      <span>:</span>
+      <div className="flex flex-col items-center">
+        <span>{formatNumber(timeLeft.seconds)}</span>
+        <span className="text-[10px] uppercase tracking-widest opacity-50">SS</span>
+      </div>
+    </div>
+  );
+};
+
+export default function App() {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   const scrollToOffer = () => {
     const el = document.getElementById('oferta');
@@ -196,16 +232,37 @@ export default function App() {
               <div className="inline-block px-4 py-1 bg-petro-green/30 border border-petro-green-light rounded-full text-petro-yellow text-sm font-bold uppercase tracking-widest">
                 Oportunidade Petrobras 2026
               </div>
-              <h1 className="text-5xl md:text-7xl font-extrabold leading-tight">
-                Não espere pelo edital. <br />
-                <span className="text-petro-yellow">Comece já</span> e garanta o seu crachá em 2026.
+              <h1 className="text-5xl md:text-7xl font-extrabold leading-tight uppercase tracking-tighter italic">
+                CONCURSO <br />
+                <span className="text-petro-yellow">PETROBRAS 2026</span>
               </h1>
-              <p className="text-xl text-gray-300 max-w-xl">
-                Preparação estratégica, direta ao ponto e focada no que realmente cai na prova de Técnico de Operação.
-              </p>
+              <div className="space-y-4">
+                <p className="text-2xl md:text-3xl font-bold text-white leading-tight">
+                  Mais de 6.000 vagas previstas em todo o Brasil. <br />
+                  Salários iniciais acima de <span className="bg-petro-yellow text-petro-dark px-2 py-0.5 rounded-md inline-block transform -rotate-1">R$8.000</span> dependendo do cargo.
+                </p>
+                <p className="text-lg text-gray-300 max-w-xl">
+                  Comece hoje sua preparação com o material baseado nos últimos editais da Petrobras.
+                </p>
+              </div>
+
+              <ul className="grid grid-cols-2 gap-4">
+                {[
+                  "Português",
+                  "Matemática",
+                  "Conhecimentos Específicos",
+                  "Segurança e Operação"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-white font-semibold">
+                    <CheckCircle2 className="w-5 h-5 text-petro-green-light" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
               <div className="flex flex-col sm:flex-row gap-4 items-center">
-                <button onClick={scrollToOffer} className="btn-yellow w-full sm:w-auto">
-                  QUERO MINHA VAGA
+                <button onClick={scrollToOffer} className="btn-yellow w-full sm:w-auto text-xl px-12 py-6">
+                  QUERO COMEÇAR AGORA
                 </button>
                 <div className="flex items-center gap-2 text-sm text-gray-400">
                   <ShieldCheck className="w-5 h-5 text-petro-green-light" />
@@ -233,6 +290,52 @@ export default function App() {
                 </div>
               </div>
             </motion.div>
+          </div>
+        </section>
+
+        {/* 2. POR QUE PETROBRAS */}
+        <section className="py-24 px-4 bg-petro-green/10">
+          <div className="max-w-7xl mx-auto space-y-16">
+            <div className="text-center space-y-4">
+              <h2 className="text-3xl md:text-5xl font-bold max-w-4xl mx-auto">
+                Por que o concurso da Petrobras é um dos mais requisitados do Brasil
+              </h2>
+              <div className="w-24 h-1 bg-petro-yellow mx-auto rounded-full"></div>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {[
+                { 
+                  icon: "💰", 
+                  title: "Salários acima de R$8.000", 
+                  desc: "Remuneração inicial competitiva com possibilidade de crescimento." 
+                },
+                { 
+                  icon: "🏢", 
+                  title: "Empresa gigante do setor de energia", 
+                  desc: "Uma das maiores empresas da América Latina." 
+                },
+                { 
+                  icon: "📈", 
+                  title: "Plano de carreira sólida", 
+                  desc: "Progressões e aumentos salariais ao longo do tempo." 
+                },
+                { 
+                  icon: "⚙️", 
+                  title: "Benefícios corporativos", 
+                  desc: "Auxílio alimentação, plano de saúde e outros benefícios." 
+                }
+              ].map((item, i) => (
+                <motion.div 
+                  key={i}
+                  whileHover={{ y: -5 }}
+                  className="glass-card p-8 space-y-4 border-white/5"
+                >
+                  <div className="text-4xl">{item.icon}</div>
+                  <h3 className="text-xl font-bold text-white leading-tight">{item.title}</h3>
+                  <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -295,28 +398,25 @@ export default function App() {
               <p className="text-gray-400">Design organizado, destaques estratégicos e estrutura pensada para retenção.</p>
             </div>
             
-            <div className="relative group">
-              <div 
-                ref={carouselRef}
-                className="flex gap-6 overflow-x-auto no-scrollbar pb-8 snap-x"
-                onClick={() => setIsCarouselPaused(!isCarouselPaused)}
-              >
-                {PAGES_PREVIEW.map((img, i) => (
-                  <div key={i} className="flex-none w-72 md:w-96 snap-center">
-                    <img 
-                      src={img} 
-                      alt={`Página ${i+1}`} 
-                      className="rounded-lg shadow-xl border border-white/10 hover:scale-105 transition-transform cursor-pointer"
-                      referrerPolicy="no-referrer"
-                    />
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+              {PAGES_PREVIEW.slice(0, 5).map((img, i) => (
+                <motion.div 
+                  key={i}
+                  whileHover={{ scale: 1.05 }}
+                  className="relative group cursor-pointer"
+                  onClick={() => setSelectedImage(img)}
+                >
+                  <img 
+                    src={img} 
+                    alt={`Página ${i+1}`} 
+                    className="rounded-lg shadow-xl border border-white/10 transition-all group-hover:border-petro-yellow/50"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                    <span className="text-white font-bold text-xs uppercase tracking-widest bg-petro-dark/80 px-3 py-1 rounded-full border border-white/20">Ver Detalhes</span>
                   </div>
-                ))}
-              </div>
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-2">
-                {isCarouselPaused && (
-                  <span className="text-xs uppercase tracking-widest text-petro-yellow animate-pulse">Pausado - Clique para continuar</span>
-                )}
-              </div>
+                </motion.div>
+              ))}
             </div>
           </div>
         </section>
@@ -548,7 +648,7 @@ export default function App() {
                 className="glass-card p-8 flex flex-col justify-between border-petro-yellow ring-4 ring-petro-yellow/20 relative bg-gradient-to-b from-petro-green/30 to-transparent shadow-[0_0_50px_rgba(255,209,0,0.2)] z-10"
               >
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-petro-yellow text-petro-dark px-6 py-1 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl whitespace-nowrap">
-                  O MAIS VENDIDO
+                  MAIS ESCOLHIDO
                 </div>
                 <div className="space-y-6">
                   <h3 className="text-3xl font-black text-petro-yellow tracking-tight">Combo Aprovação</h3>
@@ -576,13 +676,20 @@ export default function App() {
                   <div className="flex flex-col">
                     <span className="text-sm text-petro-yellow/80 font-bold uppercase tracking-widest">O Melhor Custo-Benefício</span>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-sm text-gray-400 line-through">R$ 197,00</span>
+                      <span className="text-sm text-gray-400 line-through">R$ 96,90</span>
                       <span className="text-6xl font-black text-petro-yellow drop-shadow-lg">R$ 48,90</span>
                     </div>
                   </div>
-                  <a href="https://pay.wiapy.com/WCtjlHiso0" className="btn-yellow block w-full text-xl py-5 shadow-[0_10px_30px_rgba(255,209,0,0.3)]">
-                    QUERO SER APROVADO
-                  </a>
+                  
+                  <div className="space-y-4">
+                    <div className="bg-black/40 p-4 rounded-xl border border-white/10 text-center space-y-2">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">OFERTA PROMOCIONAL POR TEMPO LIMITADO</p>
+                      <CountdownTimer />
+                    </div>
+                    <a href="https://pay.wiapy.com/WCtjlHiso0" className="block w-full text-xl py-5 rounded-xl font-black uppercase tracking-widest transition-all bg-petro-green-light hover:bg-petro-green text-white text-center shadow-[0_10px_30px_rgba(0,133,66,0.3)]">
+                      QUERO SER APROVADO
+                    </a>
+                  </div>
                 </div>
               </motion.div>
             </div>
@@ -601,6 +708,42 @@ export default function App() {
           </div>
         </section>
       </main>
+
+      {/* Lightbox Modal */}
+      <AnimatePresence>
+        {selectedImage && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm"
+            onClick={() => setSelectedImage(null)}
+          >
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative max-w-4xl w-full max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl border border-white/10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => setSelectedImage(null)}
+                className="absolute top-4 right-4 z-10 p-2 bg-black/50 hover:bg-black/80 text-white rounded-full transition-colors border border-white/10"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              <div className="overflow-y-auto max-h-[90vh] bg-white">
+                <img 
+                  src={selectedImage} 
+                  alt="Visualização Ampliada" 
+                  className="w-full h-auto"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Footer */}
       <footer className="bg-black py-16 px-4 border-t border-white/5">

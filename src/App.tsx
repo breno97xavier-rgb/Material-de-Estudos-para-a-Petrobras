@@ -607,7 +607,7 @@ export default function App() {
                   <div className="flex items-baseline gap-2">
                     <span className="text-4xl font-bold text-white">R$ 14,90</span>
                   </div>
-                  <a href="https://pay.wiapy.com/IuuREfm-3n" className="block w-full py-3 rounded-lg border border-white/10 text-center font-bold text-gray-300 hover:bg-white/5 transition-colors">
+                  <a href="https://pay.cakto.com.br/3dzacuc" className="block w-full py-3 rounded-lg border border-white/10 text-center font-bold text-gray-300 hover:bg-white/5 transition-colors">
                     ADQUIRIR AGORA
                   </a>
                 </div>
@@ -636,7 +636,7 @@ export default function App() {
                   <div className="flex items-baseline gap-2">
                     <span className="text-4xl font-bold text-white">R$ 28,90</span>
                   </div>
-                  <a href="https://pay.wiapy.com/rQa4DShctI" className="block w-full py-4 rounded-lg bg-petro-green-light text-white text-center font-bold hover:bg-petro-green transition-colors shadow-lg">
+                  <a href="https://pay.cakto.com.br/67rafyh" className="block w-full py-4 rounded-lg bg-petro-green-light text-white text-center font-bold hover:bg-petro-green transition-colors shadow-lg">
                     QUERO ESTE
                   </a>
                 </div>
@@ -686,7 +686,7 @@ export default function App() {
                       <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">OFERTA PROMOCIONAL POR TEMPO LIMITADO</p>
                       <CountdownTimer />
                     </div>
-                    <a href="https://pay.wiapy.com/WCtjlHiso0" className="block w-full text-xl py-5 rounded-xl font-black uppercase tracking-widest transition-all bg-petro-green-light hover:bg-petro-green text-white text-center shadow-[0_10px_30px_rgba(0,133,66,0.3)]">
+                    <a href="https://pay.cakto.com.br/3fn2i8q" className="block w-full text-xl py-5 rounded-xl font-black uppercase tracking-widest transition-all bg-petro-green-light hover:bg-petro-green text-white text-center shadow-[0_10px_30px_rgba(0,133,66,0.3)]">
                       QUERO SER APROVADO
                     </a>
                   </div>

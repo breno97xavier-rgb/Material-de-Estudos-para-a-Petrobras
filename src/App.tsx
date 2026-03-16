@@ -16,6 +16,7 @@ import {
   X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import confetti from 'canvas-confetti';
 
 // --- Constants & Data ---
 
@@ -188,9 +189,64 @@ const CountdownTimer = () => {
   );
 };
 
+const BuyingCounter: React.FC<{ baseValue: number }> = ({ baseValue }) => {
+  const [count, setCount] = useState(baseValue);
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStep((prevStep) => {
+        const nextStep = (prevStep + 1) % 4;
+        if (nextStep === 0) {
+          setCount((prevCount) => prevCount + 4);
+        } else {
+          setCount((prevCount) => Math.max(0, prevCount - 1));
+        }
+        return nextStep;
+      });
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-petro-green-light mt-1">
+      <div className="w-1.5 h-1.5 rounded-full bg-petro-green-light animate-pulse shadow-[0_0_8px_rgba(0,183,92,0.6)]"></div>
+      <span>{count} pessoas comprando agora</span>
+    </div>
+  );
+};
+
 export default function App() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [upsellType, setUpsellType] = useState<'essential' | 'combo' | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  const triggerConfetti = () => {
+    const duration = 3 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 200 };
+
+    const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+
+    const interval: any = setInterval(function() {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+      confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+      confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+    }, 250);
+  };
+
+  useEffect(() => {
+    if (upsellType) {
+      triggerConfetti();
+    }
+  }, [upsellType]);
 
   const scrollToOffer = () => {
     const el = document.getElementById('oferta');
@@ -238,8 +294,8 @@ export default function App() {
               </h1>
               <div className="space-y-4">
                 <p className="text-2xl md:text-3xl font-bold text-white leading-tight">
-                  Mais de 6.000 vagas previstas em todo o Brasil. <br />
-                  Salários iniciais acima de <span className="bg-petro-yellow text-petro-dark px-2 py-0.5 rounded-md inline-block transform -rotate-1">R$8.000</span> dependendo do cargo.
+                  Mais de 6.000 vagas previstas em todo o Brasil <br />
+                  Salários iniciais acima de <span className="bg-petro-yellow text-petro-dark px-2 py-0.5 rounded-md inline-block transform -rotate-1">R$ 10.000</span>
                 </p>
                 <p className="text-lg text-gray-300 max-w-xl">
                   Comece hoje sua preparação com o material baseado nos últimos editais da Petrobras.
@@ -592,32 +648,44 @@ export default function App() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
               {/* Plano 1 - Plano Simples */}
-              <div className="glass-card p-8 flex flex-col justify-between border-white/10 hover:border-white/20 transition-all">
+              <div className="glass-card p-8 flex flex-col justify-between border-white/20 hover:border-white/40 transition-all bg-white/5">
                 <div className="space-y-6">
-                  <h3 className="text-xl font-bold text-gray-300">Plano Simples</h3>
-                  <div className="w-12 h-1 bg-gray-600 rounded-full"></div>
+                  <h3 className="text-xl font-bold text-white">Plano Simples</h3>
+                  <div className="w-12 h-1 bg-petro-yellow/50 rounded-full"></div>
                   <ul className="space-y-4">
-                    <li className="flex items-center gap-3 text-sm text-gray-400">
-                      <CheckCircle2 className="w-4 h-4 text-gray-500 flex-shrink-0" /> 
+                    <li className="flex items-center gap-3 text-sm text-gray-200">
+                      <CheckCircle2 className="w-4 h-4 text-petro-yellow flex-shrink-0" /> 
                       Conteúdo básico em PDF
                     </li>
                   </ul>
                 </div>
                 <div className="mt-12 space-y-6">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-white">R$ 14,90</span>
+                  <div className="flex flex-col">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-bold text-white">R$ 14,90</span>
+                    </div>
+                    <BuyingCounter baseValue={3} />
                   </div>
-                  <a href="https://pay.cakto.com.br/3dzacuc" className="block w-full py-3 rounded-lg border border-white/10 text-center font-bold text-gray-300 hover:bg-white/5 transition-colors">
+                  <button 
+                    onClick={() => setUpsellType('essential')}
+                    className="block w-full py-3 rounded-lg border border-petro-yellow/30 text-center font-bold text-white hover:bg-petro-yellow/10 transition-colors"
+                  >
                     ADQUIRIR AGORA
-                  </a>
+                  </button>
                 </div>
               </div>
 
-              {/* Plano 2 - Plano Essencial */}
-              <div className="glass-card p-8 flex flex-col justify-between border-petro-green-light/30 bg-petro-green/5 relative overflow-hidden">
+              {/* Plano 2 - Plano Essencial (O MAIS ESCOLHIDO) */}
+              <motion.div 
+                whileHover={{ scale: 1.05 }}
+                className="glass-card p-8 flex flex-col justify-between border-petro-yellow ring-4 ring-petro-yellow/20 relative bg-gradient-to-b from-petro-green/30 to-transparent shadow-[0_0_50px_rgba(255,209,0,0.2)] z-10"
+              >
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-petro-yellow text-petro-dark px-6 py-1 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl whitespace-nowrap">
+                  O MAIS ESCOLHIDO
+                </div>
                 <div className="space-y-6">
                   <h3 className="text-2xl font-bold text-white">Plano Essencial</h3>
-                  <div className="w-12 h-1 bg-petro-green-light rounded-full"></div>
+                  <div className="w-12 h-1 bg-petro-yellow rounded-full"></div>
                   <ul className="space-y-4">
                     {[
                       "Material Teórico Completo",
@@ -625,34 +693,37 @@ export default function App() {
                       "Mapas Mentais Esquematizados Exclusivos",
                       "Plataforma de Estudos Personalizada"
                     ].map((item, i) => (
-                      <li key={i} className="flex items-center gap-3 text-sm text-gray-200">
-                        <CheckCircle2 className="w-4 h-4 text-petro-green-light flex-shrink-0" /> 
+                      <li key={i} className="flex items-center gap-3 text-sm text-white font-semibold">
+                        <CheckCircle2 className="w-4 h-4 text-petro-yellow flex-shrink-0" /> 
                         {item}
                       </li>
                     ))}
                   </ul>
                 </div>
                 <div className="mt-12 space-y-6">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-white">R$ 28,90</span>
+                  <div className="flex flex-col">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-bold text-white">R$ 28,90</span>
+                    </div>
+                    <BuyingCounter baseValue={15} />
                   </div>
-                  <a href="https://pay.cakto.com.br/67rafyh" className="block w-full py-4 rounded-lg bg-petro-green-light text-white text-center font-bold hover:bg-petro-green transition-colors shadow-lg">
+                  <button 
+                    onClick={() => setUpsellType('combo')}
+                    className="block w-full py-4 rounded-lg bg-petro-yellow text-petro-dark text-center font-bold hover:bg-white transition-colors shadow-lg"
+                  >
                     QUERO ESTE
-                  </a>
+                  </button>
                 </div>
-              </div>
+              </motion.div>
 
-              {/* Plano 3 - Combo Aprovação (O mais atrativo) */}
-              <motion.div 
-                whileHover={{ scale: 1.05 }}
-                className="glass-card p-8 flex flex-col justify-between border-petro-yellow ring-4 ring-petro-yellow/20 relative bg-gradient-to-b from-petro-green/30 to-transparent shadow-[0_0_50px_rgba(255,209,0,0.2)] z-10"
-              >
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-petro-yellow text-petro-dark px-6 py-1 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl whitespace-nowrap">
-                  MAIS ESCOLHIDO
+              {/* Plano 3 - Combo Aprovação (RECOMENDADO) */}
+              <div className="glass-card p-8 flex flex-col justify-between border-petro-green-light/50 bg-petro-green/10 relative">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-petro-green-light text-white px-6 py-1 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl whitespace-nowrap z-20">
+                  RECOMENDADO
                 </div>
                 <div className="space-y-6">
-                  <h3 className="text-3xl font-black text-petro-yellow tracking-tight">Combo Aprovação</h3>
-                  <div className="w-12 h-1 bg-petro-yellow rounded-full"></div>
+                  <h3 className="text-3xl font-black text-petro-green-light tracking-tight">Combo Aprovação</h3>
+                  <div className="w-12 h-1 bg-petro-green-light rounded-full"></div>
                   <ul className="space-y-3">
                     {[
                       "Material Teórico Completo",
@@ -666,7 +737,7 @@ export default function App() {
                       "Suporte Vip 24h"
                     ].map((item, i) => (
                       <li key={i} className="flex items-center gap-3 text-sm font-semibold text-white">
-                        <CheckCircle2 className="w-5 h-5 text-petro-yellow flex-shrink-0" /> 
+                        <CheckCircle2 className="w-5 h-5 text-petro-green-light flex-shrink-0" /> 
                         {item}
                       </li>
                     ))}
@@ -674,24 +745,23 @@ export default function App() {
                 </div>
                 <div className="mt-10 space-y-6">
                   <div className="flex flex-col">
-                    <span className="text-sm text-petro-yellow/80 font-bold uppercase tracking-widest">O Melhor Custo-Benefício</span>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-sm text-gray-400 line-through">R$ 96,90</span>
-                      <span className="text-6xl font-black text-petro-yellow drop-shadow-lg">R$ 48,90</span>
+                    <span className="text-sm text-petro-green-light font-bold uppercase tracking-widest">O Melhor Custo-Benefício</span>
+                    <div className="flex flex-col">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-sm text-gray-400 line-through">R$ 96,90</span>
+                        <span className="text-6xl font-black text-white drop-shadow-lg">R$ 48,90</span>
+                      </div>
+                      <BuyingCounter baseValue={9} />
                     </div>
                   </div>
                   
                   <div className="space-y-4">
-                    <div className="bg-black/40 p-4 rounded-xl border border-white/10 text-center space-y-2">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">OFERTA PROMOCIONAL POR TEMPO LIMITADO</p>
-                      <CountdownTimer />
-                    </div>
                     <a href="https://pay.cakto.com.br/3fn2i8q" className="block w-full text-xl py-5 rounded-xl font-black uppercase tracking-widest transition-all bg-petro-green-light hover:bg-petro-green text-white text-center shadow-[0_10px_30px_rgba(0,133,66,0.3)]">
                       QUERO SER APROVADO
                     </a>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             </div>
           </div>
         </section>
@@ -740,6 +810,71 @@ export default function App() {
                   referrerPolicy="no-referrer"
                 />
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Upsell Popup */}
+      <AnimatePresence>
+        {upsellType && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-petro-dark/90 backdrop-blur-md"
+          >
+            <motion.div 
+              initial={{ scale: 0.9, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: 20, opacity: 0 }}
+              className="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden relative border border-white/10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-6 md:p-8 space-y-6 text-center">
+                <div className="space-y-2">
+                  <h2 className="text-2xl md:text-3xl font-black text-petro-dark leading-tight">
+                    🎉 Espere! Antes de finalizar sua compra...
+                  </h2>
+                  <p className="text-gray-600 font-medium">
+                    Você está quase garantindo a versão {upsellType === 'essential' ? 'básica' : 'essencial'}.
+                  </p>
+                </div>
+
+                <div className="bg-petro-green/5 p-5 rounded-2xl border border-petro-green/10 space-y-4">
+                  <p className="text-petro-dark font-bold leading-relaxed">
+                    Mas neste momento foi liberada para você uma condição especial do <span className="text-petro-green font-black">{upsellType === 'essential' ? 'Plano Essencial' : 'Combo Aprovação'} Petrobras 2026</span>.
+                  </p>
+                  
+                  <div className="flex flex-col items-center justify-center">
+                    <span className="text-gray-400 line-through text-lg">De R$ {upsellType === 'essential' ? '28,90' : '48,90'}</span>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-sm font-bold text-petro-green">R$</span>
+                      <span className="text-5xl font-black text-petro-green">{upsellType === 'essential' ? '22,90' : '39,90'}</span>
+                    </div>
+                    <span className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mt-1">(Pagamento único)</span>
+                  </div>
+                </div>
+
+                <div className="space-y-4 pt-2">
+                  <a 
+                    href={upsellType === 'essential' ? "https://pay.cakto.com.br/szqioxr" : "https://pay.cakto.com.br/hims5mn"} 
+                    className="block w-full py-4 md:py-5 bg-petro-green hover:bg-petro-green-light text-white rounded-xl font-black text-lg uppercase tracking-wider transition-all shadow-xl shadow-petro-green/20 transform hover:scale-[1.02] active:scale-95"
+                  >
+                    Quero a promoção do {upsellType === 'essential' ? 'Plano Essencial por R$ 22,90' : 'Combo Aprovação por R$ 39,90'}
+                  </a>
+                  
+                  <a 
+                    href={upsellType === 'essential' ? "https://pay.cakto.com.br/3dzacuc" : "https://pay.cakto.com.br/67rafyh"}
+                    className="block w-full text-gray-400 hover:text-petro-dark font-bold text-sm transition-colors"
+                  >
+                    Não, quero continuar com a oferta {upsellType === 'essential' ? 'básica' : 'essencial'}
+                  </a>
+                </div>
+              </div>
+
+              {/* Decorative background elements */}
+              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-petro-yellow via-petro-green to-petro-yellow"></div>
             </motion.div>
           </motion.div>
         )}

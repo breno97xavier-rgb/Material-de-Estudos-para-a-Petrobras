@@ -646,7 +646,7 @@ export default function App() {
               <p className="text-petro-yellow font-bold tracking-widest uppercase">Invista no seu futuro hoje</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch max-w-4xl mx-auto">
               {/* Plano 1 - Plano Simples */}
               <div className="glass-card p-8 flex flex-col justify-between border-white/20 hover:border-white/40 transition-all bg-white/5">
                 <div className="space-y-6">
@@ -662,7 +662,7 @@ export default function App() {
                 <div className="mt-12 space-y-6">
                   <div className="flex flex-col">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold text-white">R$ 14,90</span>
+                      <span className="text-4xl font-bold text-white">R$ 10,00</span>
                     </div>
                     <BuyingCounter baseValue={3} />
                   </div>
@@ -675,7 +675,7 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Plano 2 - Plano Essencial (O MAIS ESCOLHIDO) */}
+              {/* Plano 2 - Plano Completo (O MAIS ESCOLHIDO) */}
               <motion.div 
                 whileHover={{ scale: 1.05 }}
                 className="glass-card p-8 flex flex-col justify-between border-petro-yellow ring-4 ring-petro-yellow/20 relative bg-gradient-to-b from-petro-green/30 to-transparent shadow-[0_0_50px_rgba(255,209,0,0.2)] z-10"
@@ -684,7 +684,7 @@ export default function App() {
                   O MAIS ESCOLHIDO
                 </div>
                 <div className="space-y-6">
-                  <h3 className="text-2xl font-bold text-white">Plano Essencial</h3>
+                  <h3 className="text-2xl font-bold text-white">Plano Completo</h3>
                   <div className="w-12 h-1 bg-petro-yellow rounded-full"></div>
                   <ul className="space-y-4">
                     {[
@@ -703,65 +703,18 @@ export default function App() {
                 <div className="mt-12 space-y-6">
                   <div className="flex flex-col">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold text-white">R$ 28,90</span>
+                      <span className="text-4xl font-bold text-white">R$ 26,00</span>
                     </div>
                     <BuyingCounter baseValue={15} />
                   </div>
-                  <button 
-                    onClick={() => setUpsellType('combo')}
+                  <a 
+                    href="https://pay.cakto.com.br/67rafyh"
                     className="block w-full py-4 rounded-lg bg-petro-yellow text-petro-dark text-center font-bold hover:bg-white transition-colors shadow-lg"
                   >
                     QUERO ESTE
-                  </button>
+                  </a>
                 </div>
               </motion.div>
-
-              {/* Plano 3 - Combo Aprovação (RECOMENDADO) */}
-              <div className="glass-card p-8 flex flex-col justify-between border-petro-green-light/50 bg-petro-green/10 relative">
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-petro-green-light text-white px-6 py-1 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl whitespace-nowrap z-20">
-                  RECOMENDADO
-                </div>
-                <div className="space-y-6">
-                  <h3 className="text-3xl font-black text-petro-green-light tracking-tight">Combo Aprovação</h3>
-                  <div className="w-12 h-1 bg-petro-green-light rounded-full"></div>
-                  <ul className="space-y-3">
-                    {[
-                      "Material Teórico Completo",
-                      "Questões Gabaritadas Inéditas",
-                      "Mapas Mentais Esquematizados Exclusivos",
-                      "Plataforma de Estudos Personalizada",
-                      "Redação Discursiva para Concursos",
-                      "Como Estudar com PDFs",
-                      "Controle Emocional - Disciplina de Ferro",
-                      "Atualizações Prioritárias Periódicas",
-                      "Suporte Vip 24h"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-center gap-3 text-sm font-semibold text-white">
-                        <CheckCircle2 className="w-5 h-5 text-petro-green-light flex-shrink-0" /> 
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="mt-10 space-y-6">
-                  <div className="flex flex-col">
-                    <span className="text-sm text-petro-green-light font-bold uppercase tracking-widest">O Melhor Custo-Benefício</span>
-                    <div className="flex flex-col">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-sm text-gray-400 line-through">R$ 96,90</span>
-                        <span className="text-6xl font-black text-white drop-shadow-lg">R$ 48,90</span>
-                      </div>
-                      <BuyingCounter baseValue={9} />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <a href="https://pay.cakto.com.br/3fn2i8q" className="block w-full text-xl py-5 rounded-xl font-black uppercase tracking-widest transition-all bg-petro-green-light hover:bg-petro-green text-white text-center shadow-[0_10px_30px_rgba(0,133,66,0.3)]">
-                      QUERO SER APROVADO
-                    </a>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </section>
@@ -837,20 +790,20 @@ export default function App() {
                     🎉 Espere! Antes de finalizar sua compra...
                   </h2>
                   <p className="text-gray-600 font-medium">
-                    Você está quase garantindo a versão {upsellType === 'essential' ? 'básica' : 'essencial'}.
+                    Você está quase garantindo a versão básica.
                   </p>
                 </div>
 
                 <div className="bg-petro-green/5 p-5 rounded-2xl border border-petro-green/10 space-y-4">
                   <p className="text-petro-dark font-bold leading-relaxed">
-                    Mas neste momento foi liberada para você uma condição especial do <span className="text-petro-green font-black">{upsellType === 'essential' ? 'Plano Essencial' : 'Combo Aprovação'} Petrobras 2026</span>.
+                    Mas neste momento foi liberada para você uma condição especial do <span className="text-petro-green font-black">Plano Completo Petrobras 2026</span>.
                   </p>
                   
                   <div className="flex flex-col items-center justify-center">
-                    <span className="text-gray-400 line-through text-lg">De R$ {upsellType === 'essential' ? '28,90' : '48,90'}</span>
+                    <span className="text-gray-400 line-through text-lg">De R$ 26,00</span>
                     <div className="flex items-baseline gap-1">
                       <span className="text-sm font-bold text-petro-green">R$</span>
-                      <span className="text-5xl font-black text-petro-green">{upsellType === 'essential' ? '22,90' : '39,90'}</span>
+                      <span className="text-5xl font-black text-petro-green">18,90</span>
                     </div>
                     <span className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mt-1">(Pagamento único)</span>
                   </div>
@@ -858,17 +811,17 @@ export default function App() {
 
                 <div className="space-y-4 pt-2">
                   <a 
-                    href={upsellType === 'essential' ? "https://pay.cakto.com.br/szqioxr" : "https://pay.cakto.com.br/hims5mn"} 
+                    href="https://pay.cakto.com.br/szqioxr" 
                     className="block w-full py-4 md:py-5 bg-petro-green hover:bg-petro-green-light text-white rounded-xl font-black text-lg uppercase tracking-wider transition-all shadow-xl shadow-petro-green/20 transform hover:scale-[1.02] active:scale-95"
                   >
-                    Quero a promoção do {upsellType === 'essential' ? 'Plano Essencial por R$ 22,90' : 'Combo Aprovação por R$ 39,90'}
+                    Quero a promoção do Plano Completo por R$ 18,90
                   </a>
                   
                   <a 
-                    href={upsellType === 'essential' ? "https://pay.cakto.com.br/3dzacuc" : "https://pay.cakto.com.br/67rafyh"}
+                    href="https://pay.cakto.com.br/3dzacuc"
                     className="block w-full text-gray-400 hover:text-petro-dark font-bold text-sm transition-colors"
                   >
-                    Não, quero continuar com a oferta {upsellType === 'essential' ? 'básica' : 'essencial'}
+                    Não, quero continuar com a oferta básica
                   </a>
                 </div>
               </div>

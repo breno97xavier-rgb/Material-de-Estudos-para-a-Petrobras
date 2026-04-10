@@ -21,16 +21,10 @@ import confetti from 'canvas-confetti';
 // --- Constants & Data ---
 
 const PAGES_PREVIEW = [
-  "https://i.ibb.co/JRvKwDGN/1.png",
-  "https://i.ibb.co/67s4xdn4/2.png",
-  "https://i.ibb.co/zkpDt8P/3.png",
-  "https://i.ibb.co/pjH4CsnQ/4.png",
-  "https://i.ibb.co/3YNHJN4G/5.png",
-  "https://i.ibb.co/v4GhCVKV/6.png",
-  "https://i.ibb.co/Q7m2R5TN/7.png",
-  "https://i.ibb.co/k2B76vfS/8.png",
-  "https://i.ibb.co/vxCpJTB8/9.png",
-  "https://i.ibb.co/sd5SLC9d/10.png"
+  { url: "https://i.ibb.co/JRvKwDGN/1.png", title: "Língua Portuguesa" },
+  { url: "https://i.ibb.co/67s4xdn4/2.png", title: "Matemática" },
+  { url: "https://i.ibb.co/zkpDt8P/3.png", title: "Química Geral" },
+  { url: "https://i.ibb.co/pjH4CsnQ/4.png", title: "Física Aplicada" }
 ];
 
 const TESTIMONIALS = [
@@ -117,8 +111,37 @@ const FAQS = [
 
 // --- Components ---
 
-const AccordionItem: React.FC<{ title: string, children: React.ReactNode }> = ({ title, children }) => {
-  const [isOpen, setIsOpen] = useState(false);
+declare global {
+  interface Window {
+    fbq: any;
+  }
+}
+
+const trackEvent = (eventName: string, params?: any) => {
+  if (typeof window !== 'undefined' && window.fbq) {
+    window.fbq('track', eventName, params);
+  }
+};
+
+const getCheckoutUrl = (url: string) => {
+  if (typeof window === 'undefined') return url;
+  const search = window.location.search;
+  if (!search) return url;
+  
+  try {
+    const urlObj = new URL(url);
+    const params = new URLSearchParams(search);
+    params.forEach((value, key) => {
+      urlObj.searchParams.set(key, value);
+    });
+    return urlObj.toString();
+  } catch (e) {
+    return url;
+  }
+};
+
+const AccordionItem: React.FC<{ title: string, children: React.ReactNode, defaultOpen?: boolean }> = ({ title, children, defaultOpen = false }) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
   return (
     <div className={`border-b border-white/10 ${isOpen ? 'accordion-open' : ''}`}>
       <button 
@@ -248,6 +271,10 @@ export default function App() {
     }
   }, [upsellType]);
 
+  useEffect(() => {
+    trackEvent('PageView');
+  }, []);
+
   const scrollToOffer = () => {
     const el = document.getElementById('oferta');
     el?.scrollIntoView({ behavior: 'smooth' });
@@ -278,7 +305,18 @@ export default function App() {
       <main className="flex-grow">
         {/* 1. HERO SECTION */}
         <section className="relative pt-20 pb-32 px-4 overflow-hidden">
-          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
+          {/* Background Image with Transparency */}
+          <div className="absolute inset-0 z-0 opacity-10">
+            <img 
+              src="https://i.ibb.co/Zpwwbvcg/concurso-nivel-tecnico.jpg" 
+              alt="Background" 
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-petro-dark via-transparent to-petro-dark"></div>
+          </div>
+
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center relative z-10">
             <motion.div 
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -293,31 +331,17 @@ export default function App() {
                 <span className="text-petro-yellow">PETROBRAS 2026</span>
               </h1>
               <div className="space-y-4">
-                <p className="text-2xl md:text-3xl font-bold text-white leading-tight">
-                  Mais de 6.000 vagas previstas em todo o Brasil <br />
-                  Salários iniciais acima de <span className="bg-petro-yellow text-petro-dark px-2 py-0.5 rounded-md inline-block transform -rotate-1">R$ 10.000</span>
+                <p className="text-2xl md:text-4xl font-black text-white leading-tight">
+                  Mais de 6.000 vagas previstas <br />
+                  Salário inicial acima de <span className="bg-petro-yellow text-petro-dark px-2 py-0.5 rounded-md inline-block transform -rotate-1">R$ 10.000</span>
                 </p>
                 <p className="text-lg text-gray-300 max-w-xl">
                   Comece hoje sua preparação com o material baseado nos últimos editais da Petrobras.
                 </p>
               </div>
 
-              <ul className="grid grid-cols-2 gap-4">
-                {[
-                  "Português",
-                  "Matemática",
-                  "Conhecimentos Específicos",
-                  "Segurança e Operação"
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-2 text-white font-semibold">
-                    <CheckCircle2 className="w-5 h-5 text-petro-green-light" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-
               <div className="flex flex-col sm:flex-row gap-4 items-center">
-                <button onClick={scrollToOffer} className="btn-yellow w-full sm:w-auto text-xl px-12 py-6">
+                <button onClick={scrollToOffer} className="btn-yellow w-full sm:w-auto text-2xl px-16 py-8 shadow-[0_0_30px_rgba(255,209,0,0.3)] hover:scale-105 transition-all">
                   QUERO COMEÇAR AGORA
                 </button>
                 <div className="flex items-center gap-2 text-sm text-gray-400">
@@ -396,25 +420,25 @@ export default function App() {
         </section>
 
         {/* 2. SEÇÃO DE IDENTIFICAÇÃO */}
-        <section className="py-24 px-4 bg-black/40">
+        <section className="py-24 px-4 bg-black/60">
           <div className="max-w-7xl mx-auto text-center space-y-16">
             <h2 className="text-3xl md:text-5xl font-bold">Você se identifica com isso?</h2>
             <div className="grid md:grid-cols-3 gap-8">
               {[
-                { icon: <BookOpen className="w-10 h-10" />, title: "Edital gigante?", desc: "Conteúdo extenso e difícil de organizar sozinho." },
-                { icon: <Layout className="w-10 h-10" />, title: "Materiais desorganizados?", desc: "PDFs soltos, aulas confusas e falta de direção." },
-                { icon: <AlertCircle className="w-10 h-10" />, title: "Medo de não conseguir?", desc: "Sensação de estar estudando muito e evoluindo pouco." }
+                { icon: <BookOpen className="w-12 h-12" />, title: "Edital gigante?", desc: "Conteúdo extenso e difícil de organizar sozinho." },
+                { icon: <Layout className="w-12 h-12" />, title: "Materiais desorganizados?", desc: "PDFs soltos, aulas confusas e falta de direção." },
+                { icon: <AlertCircle className="w-12 h-12" />, title: "Medo de não conseguir?", desc: "Sensação de estar estudando muito e evoluindo pouco." }
               ].map((card, i) => (
                 <motion.div 
                   key={i}
                   whileHover={{ y: -10 }}
-                  className="glass-card p-10 space-y-6 text-center"
+                  className="glass-card p-10 space-y-6 text-center bg-white/10 border-white/10"
                 >
-                  <div className="mx-auto w-20 h-20 bg-petro-yellow/10 rounded-full flex items-center justify-center text-petro-yellow">
+                  <div className="mx-auto w-24 h-24 bg-petro-yellow/20 rounded-full flex items-center justify-center text-petro-yellow shadow-lg">
                     {card.icon}
                   </div>
-                  <h3 className="text-2xl font-bold">{card.title}</h3>
-                  <p className="text-gray-400 leading-relaxed">{card.desc}</p>
+                  <h3 className="text-3xl font-black text-white">{card.title}</h3>
+                  <p className="text-gray-200 text-lg leading-relaxed font-medium">{card.desc}</p>
                 </motion.div>
               ))}
             </div>
@@ -430,16 +454,16 @@ export default function App() {
             </div>
             <div className="grid md:grid-cols-3 gap-12">
               {[
-                { icon: <Target className="w-12 h-12" />, title: "Teoria Direcionada", desc: "Explicações objetivas, sem enrolação, focadas no que a Petrobras cobra." },
-                { icon: <FileText className="w-12 h-12" />, title: "Mapas Mentais Estratégicos", desc: "Organização inteligente do conteúdo para memorização visual rápida." },
-                { icon: <Zap className="w-12 h-12" />, title: "Treino de Banca", desc: "Questões no estilo da prova para fixação real e domínio do tempo." }
+                { icon: <Target className="w-16 h-16" />, title: "Teoria Direcionada", desc: "Explicações objetivas e focadas no que a Petrobras realmente cobra." },
+                { icon: <FileText className="w-16 h-16" />, title: "Mapas Mentais Estratégicos", desc: "Organização inteligente para memorização visual rápida e eficiente." },
+                { icon: <Zap className="w-16 h-16" />, title: "Treino de Banca", desc: "Questões no estilo da prova para domínio total do tempo e conteúdo." }
               ].map((item, i) => (
                 <div key={i} className="flex flex-col items-center text-center space-y-6">
-                  <div className="text-petro-green-light">
+                  <div className="text-petro-yellow bg-petro-green/20 p-6 rounded-3xl shadow-inner">
                     {item.icon}
                   </div>
-                  <h3 className="text-2xl font-bold">{item.title}</h3>
-                  <p className="text-gray-400">{item.desc}</p>
+                  <h3 className="text-3xl font-black text-petro-green-light uppercase tracking-tight">{item.title}</h3>
+                  <p className="text-gray-300 text-lg font-medium leading-snug max-w-xs">{item.desc}</p>
                 </div>
               ))}
             </div>
@@ -454,22 +478,24 @@ export default function App() {
               <p className="text-gray-400">Design organizado, destaques estratégicos e estrutura pensada para retenção.</p>
             </div>
             
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-              {PAGES_PREVIEW.slice(0, 5).map((img, i) => (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {PAGES_PREVIEW.map((item, i) => (
                 <motion.div 
                   key={i}
                   whileHover={{ scale: 1.05 }}
-                  className="relative group cursor-pointer"
-                  onClick={() => setSelectedImage(img)}
+                  className="relative group cursor-pointer flex flex-col gap-3"
+                  onClick={() => setSelectedImage(item.url)}
                 >
-                  <img 
-                    src={img} 
-                    alt={`Página ${i+1}`} 
-                    className="rounded-lg shadow-xl border border-white/10 transition-all group-hover:border-petro-yellow/50"
-                    referrerPolicy="no-referrer"
-                  />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
-                    <span className="text-white font-bold text-xs uppercase tracking-widest bg-petro-dark/80 px-3 py-1 rounded-full border border-white/20">Ver Detalhes</span>
+                  <div className="relative">
+                    <img 
+                      src={item.url} 
+                      alt={`Página ${i + 1}`} 
+                      className="rounded-lg shadow-xl border border-white/10 transition-all group-hover:border-petro-yellow/50 w-full"
+                      referrerPolicy="no-referrer"
+                    />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                      <span className="text-white font-bold text-xs uppercase tracking-widest bg-petro-dark/80 px-3 py-1 rounded-full border border-white/20">Ver Detalhes</span>
+                    </div>
                   </div>
                 </motion.div>
               ))}
@@ -482,7 +508,7 @@ export default function App() {
           <h2 className="text-3xl md:text-5xl font-bold text-center mb-16">Conteúdo Programático Completo</h2>
           <div className="space-y-2">
             {SYLLABUS.map((section, i) => (
-              <AccordionItem key={i} title={section.title}>
+              <AccordionItem key={i} title={section.title} defaultOpen={i === 0}>
                 <ul className="space-y-3">
                   {section.items.map((item, j) => (
                     <li key={j} className="flex items-start gap-3">
@@ -551,16 +577,41 @@ export default function App() {
               </div>
             </div>
 
+            {/* Video Testimonials */}
+            <div className="space-y-12 pt-12">
+              <h2 className="text-3xl md:text-5xl font-bold text-center">Depoimentos de nossos alunos</h2>
+              <div className="grid md:grid-cols-3 gap-6">
+                {[
+                  "https://youtube.com/shorts/oEbvpN_Kx44?feature=share",
+                  "https://youtube.com/shorts/6aY24_7rCJ8?feature=share",
+                  "https://youtube.com/shorts/5CQtS6BZVhQ?feature=share"
+                ].map((url, i) => {
+                  const videoId = url.split('/').pop()?.split('?')[0];
+                  return (
+                    <div key={i} className="aspect-[9/16] rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-black">
+                      <iframe 
+                        src={`https://www.youtube.com/embed/${videoId}`}
+                        className="w-full h-full"
+                        title={`Depoimento ${i + 1}`}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="text-center pt-10">
-              <button onClick={scrollToOffer} className="btn-yellow">
-                QUERO ADQUIRIR TAMBÉM
+              <button onClick={scrollToOffer} className="btn-yellow text-xl px-12 py-6">
+                QUERO ESTUDAR COM QUEM JÁ FOI APROVADO
               </button>
             </div>
           </div>
         </section>
 
         {/* 7. O QUE VOCÊ RECEBE */}
-        <section className="py-24 px-4">
+        <section className="py-24 px-4 bg-petro-dark">
           <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
             <div className="order-2 lg:order-1 relative">
               <motion.div
@@ -576,19 +627,21 @@ export default function App() {
                 />
               </motion.div>
             </div>
-            <div className="order-1 lg:order-2 space-y-8">
-              <h2 className="text-3xl md:text-5xl font-bold">O que você recebe ao garantir sua vaga hoje:</h2>
-              <ul className="space-y-6">
+            <div className="order-1 lg:order-2 space-y-10">
+              <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter text-white">O que você recebe ao garantir sua vaga hoje:</h2>
+              <ul className="space-y-8">
                 {[
-                  "Apostila Completa em PDF (Teoria + Questões)",
-                  "Atualizações gratuitas até o edital 2026",
-                  "Bônus exclusivos para acelerar sua memorização",
-                  "Material organizado rigorosamente por edital",
-                  "Acesso imediato após a confirmação do pagamento"
-                ].map((text, i) => (
-                  <li key={i} className="flex items-center gap-4 text-lg">
-                    <CheckCircle2 className="w-6 h-6 text-petro-green-light flex-shrink-0" />
-                    <span>{text}</span>
+                  { icon: <BookOpen className="text-petro-yellow" />, text: "✅ Estude offline em qualquer lugar — Material Teórico Completo organizado por matéria" },
+                  { icon: <Zap className="text-petro-green-light" />, text: "✅ Evolução constante — Atualizações gratuitas garantidas até o edital 2026" },
+                  { icon: <Target className="text-petro-yellow" />, text: "✅ Memorização acelerada — Bônus exclusivos com Mapas Mentais estratégicos" },
+                  { icon: <Layout className="text-petro-green-light" />, text: "✅ Foco total no que cai — Material organizado rigorosamente seguindo o último edital" },
+                  { icon: <Zap className="text-petro-yellow" />, text: "✅ Comece agora mesmo — Acesso imediato enviado ao seu e-mail após o pagamento" }
+                ].map((item, i) => (
+                  <li key={i} className="flex items-start gap-5 text-xl md:text-2xl font-bold text-gray-100">
+                    <div className="mt-1 p-2 bg-white/5 rounded-lg border border-white/10">
+                      {React.cloneElement(item.icon as React.ReactElement, { className: 'w-8 h-8' })}
+                    </div>
+                    <span className="leading-tight">{item.text}</span>
                   </li>
                 ))}
               </ul>
@@ -621,32 +674,62 @@ export default function App() {
         </section>
 
         {/* 10. GARANTIA (Compact) */}
-        <section className="py-16 px-4">
+        <section className="py-24 px-4 bg-petro-green/10">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="max-w-3xl mx-auto glass-card p-10 text-center space-y-6 border-petro-green-light/30 bg-petro-green/5"
+            className="max-w-4xl mx-auto glass-card p-12 text-center space-y-8 border-petro-yellow/30 bg-petro-dark/40 shadow-[0_0_50px_rgba(0,133,66,0.1)]"
           >
-            <div className="mx-auto w-20 h-20 bg-petro-green-light/20 rounded-full flex items-center justify-center text-petro-green-light">
-              <ShieldCheck className="w-10 h-10" />
+            <div className="mx-auto w-32 h-32 bg-petro-yellow/20 rounded-full flex items-center justify-center text-petro-yellow shadow-xl">
+              <ShieldCheck className="w-16 h-16" />
             </div>
-            <h2 className="text-3xl font-bold">Garantia Incondicional de 7 Dias</h2>
+            <div className="space-y-4">
+              <h2 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter">Risco Zero: Garantia de 7 Dias</h2>
+              <p className="text-petro-yellow font-bold text-xl">Se não gostar por qualquer motivo, devolvemos 100% do seu dinheiro. Sem perguntas.</p>
+            </div>
             <p className="text-gray-300 text-lg leading-relaxed max-w-2xl mx-auto">
-              Risco zero. Teste o material, explore os bônus e sinta a qualidade. Se por qualquer motivo você não gostar, basta nos enviar um e-mail e devolvemos 100% do seu dinheiro. Sem perguntas, sem burocracia.
+              Teste o material, explore os bônus e sinta a qualidade. Temos tanta confiança no nosso método que assumimos todo o risco por você.
             </p>
           </motion.div>
         </section>
 
+        {/* 11. FAQ */}
+        <section className="py-24 px-4 max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-5xl font-bold text-center mb-16">Dúvidas Frequentes</h2>
+          <div className="space-y-4">
+            {FAQS.map((faq, i) => (
+              <AccordionItem key={i} title={faq.q}>
+                <p>{faq.a}</p>
+              </AccordionItem>
+            ))}
+          </div>
+        </section>
+
+        {/* 12. SEÇÃO FINAL DE FECHAMENTO */}
+        <section className="py-24 px-4 bg-gradient-to-b from-transparent to-petro-green/20">
+          <div className="max-w-4xl mx-auto glass-card p-12 text-center space-y-8 border-petro-green-light/30">
+            <div className="space-y-4">
+              <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-tight">
+                O edital da Petrobras 2026 pode sair a qualquer momento. <span className="text-petro-yellow">Não fique para trás.</span>
+              </h2>
+              <p className="text-2xl font-bold text-gray-300">Comece hoje com o material completo</p>
+            </div>
+            <button onClick={scrollToOffer} className="btn-yellow text-2xl px-16 py-8 shadow-2xl hover:scale-105 transition-all">
+              GARANTIR MEU MATERIAL AGORA
+            </button>
+          </div>
+        </section>
+
         {/* 9. PLANOS E PREÇOS */}
         <section id="oferta" className="py-32 px-4 relative">
-          <div className="max-w-5xl mx-auto space-y-16">
+          <div className="max-w-7xl mx-auto space-y-16">
             <div className="text-center space-y-4">
               <h2 className="text-4xl md:text-6xl font-black uppercase italic tracking-tighter">Escolha seu plano</h2>
               <p className="text-petro-yellow font-bold tracking-widest uppercase">Invista no seu futuro hoje</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
               {/* Plano 1 - Plano Simples */}
               <div className="glass-card p-8 flex flex-col justify-between border-white/20 hover:border-white/40 transition-all bg-white/5">
                 <div className="space-y-6">
@@ -655,7 +738,7 @@ export default function App() {
                   <ul className="space-y-4">
                     <li className="flex items-center gap-3 text-sm text-gray-200">
                       <CheckCircle2 className="w-4 h-4 text-petro-yellow flex-shrink-0" /> 
-                      Conteúdo básico em PDF
+                      Material Teórico Completo
                     </li>
                   </ul>
                 </div>
@@ -675,17 +758,11 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Plano 2 - Plano Completo (O MAIS ESCOLHIDO) */}
-              <motion.div 
-                whileHover={{ scale: 1.05 }}
-                className="glass-card p-8 flex flex-col justify-between border-petro-yellow ring-4 ring-petro-yellow/20 relative bg-gradient-to-b from-petro-green/30 to-transparent shadow-[0_0_50px_rgba(255,209,0,0.2)] z-10"
-              >
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-petro-yellow text-petro-dark px-6 py-1 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl whitespace-nowrap">
-                  O MAIS ESCOLHIDO
-                </div>
+              {/* Plano 2 - Plano Essencial */}
+              <div className="glass-card p-8 flex flex-col justify-between border-white/20 hover:border-white/40 transition-all bg-white/5">
                 <div className="space-y-6">
-                  <h3 className="text-2xl font-bold text-white">Plano Completo</h3>
-                  <div className="w-12 h-1 bg-petro-yellow rounded-full"></div>
+                  <h3 className="text-xl font-bold text-white">Plano Essencial</h3>
+                  <div className="w-12 h-1 bg-petro-yellow/50 rounded-full"></div>
                   <ul className="space-y-4">
                     {[
                       "Material Teórico Completo",
@@ -693,7 +770,7 @@ export default function App() {
                       "Mapas Mentais Esquematizados Exclusivos",
                       "Plataforma de Estudos Personalizada"
                     ].map((item, i) => (
-                      <li key={i} className="flex items-center gap-3 text-sm text-white font-semibold">
+                      <li key={i} className="flex items-center gap-3 text-sm text-gray-200">
                         <CheckCircle2 className="w-4 h-4 text-petro-yellow flex-shrink-0" /> 
                         {item}
                       </li>
@@ -707,27 +784,64 @@ export default function App() {
                     </div>
                     <BuyingCounter baseValue={15} />
                   </div>
-                  <a 
-                    href="https://pay.cakto.com.br/67rafyh"
-                    className="block w-full py-4 rounded-lg bg-petro-yellow text-petro-dark text-center font-bold hover:bg-white transition-colors shadow-lg"
+                  <button 
+                    onClick={() => setUpsellType('combo')}
+                    className="block w-full py-3 rounded-lg border border-petro-yellow/30 text-center font-bold text-white hover:bg-petro-yellow/10 transition-colors"
                   >
                     QUERO ESTE
+                  </button>
+                </div>
+              </div>
+
+              {/* Plano 3 - Combo Aprovação (O MAIS ESCOLHIDO) */}
+              <motion.div 
+                whileHover={{ scale: 1.05 }}
+                className="glass-card p-8 flex flex-col justify-between border-petro-yellow ring-4 ring-petro-yellow/20 relative bg-gradient-to-b from-petro-green/30 to-transparent shadow-[0_0_50px_rgba(255,209,0,0.2)] z-10"
+              >
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-petro-yellow text-petro-dark px-6 py-1 rounded-full font-bold text-sm uppercase tracking-widest shadow-xl whitespace-nowrap">
+                  O MAIS ESCOLHIDO
+                </div>
+                <div className="space-y-6">
+                  <h3 className="text-2xl font-bold text-white">Combo Aprovação</h3>
+                  <div className="w-12 h-1 bg-petro-yellow rounded-full"></div>
+                  <ul className="space-y-3">
+                    {[
+                      "Material Teórico Completo",
+                      "Questões Gabaritadas Inéditas",
+                      "Mapas Mentais Esquematizados Exclusivos",
+                      "Plataforma de Estudos Personalizada",
+                      "Simulados Esquematizados",
+                      "Revisão Completa",
+                      "Redação Discursiva",
+                      "Como Estudar com PDFs",
+                      "Disciplina de Ferro",
+                      "Controle Emocional",
+                      "Acesso Imediato"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-sm text-white font-semibold">
+                        <CheckCircle2 className="w-4 h-4 text-petro-yellow flex-shrink-0" /> 
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="mt-12 space-y-6">
+                  <div className="flex flex-col">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-bold text-white">R$ 37,00</span>
+                    </div>
+                    <BuyingCounter baseValue={28} />
+                  </div>
+                  <a 
+                    href={getCheckoutUrl("https://pay.cakto.com.br/3fn2i8q")}
+                    onClick={() => trackEvent('InitiateCheckout')}
+                    className="block w-full py-4 rounded-lg bg-petro-yellow text-petro-dark text-center font-bold hover:bg-white transition-colors shadow-lg"
+                  >
+                    QUERO SER APROVADO
                   </a>
                 </div>
               </motion.div>
             </div>
-          </div>
-        </section>
-
-        {/* 11. FAQ */}
-        <section className="py-24 px-4 max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-5xl font-bold text-center mb-16">Dúvidas Frequentes</h2>
-          <div className="space-y-4">
-            {FAQS.map((faq, i) => (
-              <AccordionItem key={i} title={faq.q}>
-                <p>{faq.a}</p>
-              </AccordionItem>
-            ))}
           </div>
         </section>
       </main>
@@ -790,20 +904,20 @@ export default function App() {
                     🎉 Espere! Antes de finalizar sua compra...
                   </h2>
                   <p className="text-gray-600 font-medium">
-                    Você está quase garantindo a versão básica.
+                    Você está quase garantindo a versão {upsellType === 'essential' ? 'básica' : 'essencial'}.
                   </p>
                 </div>
 
                 <div className="bg-petro-green/5 p-5 rounded-2xl border border-petro-green/10 space-y-4">
                   <p className="text-petro-dark font-bold leading-relaxed">
-                    Mas neste momento foi liberada para você uma condição especial do <span className="text-petro-green font-black">Plano Completo Petrobras 2026</span>.
+                    Mas neste momento foi liberada para você uma condição especial do <span className="text-petro-green font-black">{upsellType === 'essential' ? 'Plano Essencial' : 'Combo Aprovação'} Petrobras 2026</span>.
                   </p>
                   
                   <div className="flex flex-col items-center justify-center">
-                    <span className="text-gray-400 line-through text-lg">De R$ 26,00</span>
+                    <span className="text-gray-400 line-through text-lg">De R$ {upsellType === 'essential' ? '26,00' : '37,00'}</span>
                     <div className="flex items-baseline gap-1">
                       <span className="text-sm font-bold text-petro-green">R$</span>
-                      <span className="text-5xl font-black text-petro-green">18,90</span>
+                      <span className="text-5xl font-black text-petro-green">{upsellType === 'essential' ? '18,90' : '31,90'}</span>
                     </div>
                     <span className="text-[10px] uppercase tracking-widest text-gray-400 font-bold mt-1">(Pagamento único)</span>
                   </div>
@@ -811,17 +925,19 @@ export default function App() {
 
                 <div className="space-y-4 pt-2">
                   <a 
-                    href="https://pay.cakto.com.br/szqioxr" 
+                    href={getCheckoutUrl(upsellType === 'essential' ? "https://pay.cakto.com.br/szqioxr" : "https://pay.cakto.com.br/hims5mn")} 
+                    onClick={() => trackEvent('InitiateCheckout')}
                     className="block w-full py-4 md:py-5 bg-petro-green hover:bg-petro-green-light text-white rounded-xl font-black text-lg uppercase tracking-wider transition-all shadow-xl shadow-petro-green/20 transform hover:scale-[1.02] active:scale-95"
                   >
-                    Quero a promoção do Plano Completo por R$ 18,90
+                    Quero a promoção do {upsellType === 'essential' ? 'Plano Essencial por R$ 18,90' : 'Combo Aprovação por R$ 31,90'}
                   </a>
                   
                   <a 
-                    href="https://pay.cakto.com.br/3dzacuc"
+                    href={getCheckoutUrl(upsellType === 'essential' ? "https://pay.cakto.com.br/3dzacuc" : "https://pay.cakto.com.br/67rafyh")}
+                    onClick={() => trackEvent('InitiateCheckout')}
                     className="block w-full text-gray-400 hover:text-petro-dark font-bold text-sm transition-colors"
                   >
-                    Não, quero continuar com a oferta básica
+                    Não, quero continuar com a oferta {upsellType === 'essential' ? 'básica' : 'essencial'}
                   </a>
                 </div>
               </div>
